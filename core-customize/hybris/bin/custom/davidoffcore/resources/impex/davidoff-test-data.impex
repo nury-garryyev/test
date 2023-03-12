@@ -1,0 +1,152 @@
+INSERT_UPDATE OAuthClientDetails;clientId[unique=true]    ;resourceIds       ;scope        ;authorizedGrantTypes                                            ;authorities             ;clientSecret    ;registeredRedirectUri
+                                ;client-side              ;hybris            ;basic        ;implicit,client_credentials                                     ;ROLE_CLIENT             ;secret          ;http://localhost:9001/authorizationserver/oauth2_implicit_callback;
+                                ;mobile_android           ;hybris            ;basic        ;authorization_code,refresh_token,password,client_credentials    ;ROLE_CLIENT             ;secret          ;http://localhost:9001/authorizationserver/oauth2_callback;
+
+INSERT_UPDATE B2BCustomer;groups(uid);uid[unique=true];name;customerID;email;title(code);password;
+                         ;Custom Retail,Pronto,b2badmingroup;test@dv.com;DV Test User;test@dv.com;test@dv.com;mr;test123
+
+# Address created for Credit Card payment
+INSERT_UPDATE Address;owner(Customer.uid)[unique=true];streetname[unique=true];postalcode;town[default='Washington'];region(isocode)[default='US-WA'];country(isocode)[default='US'];shippingAddress[default=true];firstname;lastname;title(code)[default='mr']
+                     ;test@dv.com;Address line10;123abc;;;;;Powertools;User;
+
+# Address created for Account payment
+INSERT_UPDATE Address;owner(B2BUnit.uid)[unique=true];streetname[unique=true];postalcode;town[default='Washington'];region(isocode)[default='US-WA'];country(isocode)[default='US'];shippingAddress[default=true];firstname;lastname;title(code)[default='mr']
+                     ;Custom Retail;Address line11;abc123;;;;;Powertools;User;
+
+# Macros / Replacement Parameter definitions
+$productCatalog=powertoolsProductCatalog
+$productCatalogName=Powertools Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$supercategories=supercategories(code, $catalogVersion)
+$baseProduct=baseProduct(code,$catalogVersion)
+$approved=approvalstatus(code)[default='approved']
+$lang=en
+
+INSERT_UPDATE ApparelProduct;code[unique=true];$catalogVersion;unit(code)[default='pieces'];supercategories(code,$catalogVersion);varianttype(code);$approved;ean;genders(code);manufacturerAID
+                            ;DV_3;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_4;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_5;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_6;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_7;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_8;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_9;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_10;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+                            ;DV_11;;pieces;1595, brand_4439, B2B_Color;ApparelStyleVariantProduct;;4905524593235;MALE;Einhell
+
+
+INSERT_UPDATE ApparelStyleVariantProduct;code[unique=true];$catalogVersion;$baseProduct;unit(code);swatchColors(code);supercategories(code,$catalogVersion);varianttype(code);$approved
+                                        ;DV_3_B;;DV_3;pieces;BLACK;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_3_W;;DV_3;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_4_S;;DV_4;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_5_S;;DV_5;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_6_S;;DV_6;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_7_S;;DV_7;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_8_S;;DV_8;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_9_S;;DV_9;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_10_S;;DV_10;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+                                        ;DV_11_S;;DV_11;pieces;WHITE;1595, brand_4439;ApparelSizeVariantProduct
+
+
+INSERT_UPDATE ApparelSizeVariantProduct;code[unique=true];$catalogVersion;$baseProduct;unit(code);swatchColors(code);supercategories(code,$catalogVersion);varianttype(code);$approved
+                                        ;DV_3_B_SKU1;;DV_3_B;pieces;BLACK;1595, brand_4439;
+                                        ;DV_3_W_SKU2;;DV_3_W;pieces;WHITE;1595, brand_4439;
+                                        ;DV_4_S_SKU;;DV_4_S;pieces;WHITE;1595, brand_4439;
+                                        ;DV_5_S_SKU;;DV_5_S;pieces;WHITE;1595, brand_4439;
+                                        ;DV_6_S_SKU;;DV_6_S;pieces;WHITE;1595, brand_4439;
+                                        ;DV_7_S_SKU;;DV_7_S;pieces;WHITE;1595, brand_4439;
+                                        ;DV_8_S_SKU;;DV_8_S;pieces;WHITE;1595, brand_4439;
+                                        ;DV_9_S_SKU;;DV_9_S;pieces;WHITE;1595, brand_4439;
+                                        ;DV_10_S_SKU;;DV_10_S;pieces;WHITE;1595, brand_4439;
+                                        ;DV_11_S_SKU;;DV_11_S;pieces;WHITE;1595, brand_4439;
+
+
+UPDATE Product;code[unique=true];$catalogVersion;ApparelStyleVariantProduct.style[lang=$lang];ApparelSizeVariantProduct.size[lang=$lang]
+                ;DV_3_B_SKU1;;Pack of 4;4
+                ;DV_3_W_SKU2;;Box of 25;25
+
+INSERT_UPDATE StockLevel;productCode[unique=true];warehouse(code)[unique=true,default=default];available;inStockStatus(code);maxPreOrder[default=1];maxStockLevelHistoryCount[default=-1];overSelling[default=0];preOrder[default=0];reserved[default=0]
+                        ;DV_3_B_SKU1;pw_warehouse_s;0;forceInStock
+                        ;DV_3_W_SKU2;pw_warehouse_s;0;forceInStock
+
+
+UPDATE Product;code[unique=true];name[lang=$lang];description[lang=$lang];summary[lang=$lang];$catalogVersion
+                ;DV_3;Davidoff Grand Cru Toro; The Davidoff Grand Cru Toro is the largest format in the series. Introducing itself with a charming, creamy sweetness. Fewer woody flavors than one would find with a Robusto while greater notes of earth await you. This Toro is, until the very last puff, a pleasantly surprising, utterly charming cigar.Davidoff Grand Cru cigars, with their bold spice and peppery notes pair exceptionally well with Bordeaux wines with flavorful tannins.;Davidoff Grand Cru Toro
+                ;DV_3_B;Davidoff Grand Cru Toro - Pack of 4; The Davidoff Grand Cru Toro is the largest format in the series. Introducing itself with a charming, creamy sweetness. Fewer woody flavors than one would find with a Robusto while greater notes of earth await you. This Toro is, until the very last puff, a pleasantly surprising, utterly charming cigar.Davidoff Grand Cru cigars, with their bold spice and peppery notes pair exceptionally well with Bordeaux wines with flavorful tannins.;Davidoff Grand Cru Toro
+                ;DV_3_W;Davidoff Grand Cru Toro - Box of 25; The Davidoff Grand Cru Toro is the largest format in the series. Introducing itself with a charming, creamy sweetness. Fewer woody flavors than one would find with a Robusto while greater notes of earth await you. This Toro is, until the very last puff, a pleasantly surprising, utterly charming cigar.Davidoff Grand Cru cigars, with their bold spice and peppery notes pair exceptionally well with Bordeaux wines with flavorful tannins.;Davidoff Grand Cru Toro
+                ;DV_3_B_SKU1;Davidoff Grand Cru Toro - Pack of 4; The Davidoff Grand Cru Toro is the largest format in the series. Introducing itself with a charming, creamy sweetness. Fewer woody flavors than one would find with a Robusto while greater notes of earth await you. This Toro is, until the very last puff, a pleasantly surprising, utterly charming cigar.Davidoff Grand Cru cigars, with their bold spice and peppery notes pair exceptionally well with Bordeaux wines with flavorful tannins.;Davidoff Grand Cru Toro
+                ;DV_3_W_SKU2;Davidoff Grand Cru Toro - Box of 25; The Davidoff Grand Cru Toro is the largest format in the series. Introducing itself with a charming, creamy sweetness. Fewer woody flavors than one would find with a Robusto while greater notes of earth await you. This Toro is, until the very last puff, a pleasantly surprising, utterly charming cigar.Davidoff Grand Cru cigars, with their bold spice and peppery notes pair exceptionally well with Bordeaux wines with flavorful tannins.;Davidoff Grand Cru Toro
+
+
+$prices=Europe1prices[translator=de.hybris.platform.europe1.jalo.impex.Europe1PricesTranslator]
+$taxGroup=Europe1PriceFactory_PTG(code)[default=us-sales-tax-full]
+
+UPDATE Product;code[unique=true];$prices;$approved;$catalogVersion;$taxGroup
+              ;DV_3_B_SKU1;1 pieces = 43 USD N
+              ;DV_3_W_SKU2;1 pieces = 23 USD N
+
+
+$productCatalog=powertoolsProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$thumbnail=thumbnail(code, $catalogVersion)
+$picture=picture(code, $catalogVersion)
+
+
+UPDATE Product;code[unique=true];$picture;$thumbnail;$catalogVersion;
+             ;DV_3;/300Wx300H/1677069-5124.jpg;/300Wx300H/1677069-5124.jpg;
+             ;DV_3_B_SKU1;/300Wx300H/1677069-5124.jpg;/300Wx300H/1677069-5124.jpg;
+             ;DV_3_W_SKU2;/515Wx515H/4567194-4483.jpg;/515Wx515H/4567194-4483.jpg;
+             ;DV_3_W;/515Wx515H/4567194-4483.jpg;/515Wx515H/4567194-4483.jpg;
+             ;DV_3_B;/515Wx515H/4567194-4483.jpg;/515Wx515H/4567194-4483.jpg;
+
+
+$solrIndexedType=powertoolsProductType
+$searchIndexNamePrefix=powertools
+
+
+UPDATE SolrIndexerQuery; solrIndexedType(identifier)[unique = true]; identifier[unique = true]        ;query
+                       ; $solrIndexedType                          ; $searchIndexNamePrefix-fullQuery ; "
+ SELECT DISTINCT {p:PK}
+ FROM {Product AS p}
+ WHERE {p:PK} NOT IN
+ (
+    {{
+       SELECT {ap:PK}
+          FROM {ApparelSizeVariantProduct AS ap}
+    }}
+ )
+ AND {p:PK} NOT IN
+ (
+    {{
+       SELECT {asv:PK}
+          FROM {ApparelStyleVariantProduct AS asv}
+    }}
+ )"
+
+
+INSERT_UPDATE ProductListCategory;code[unique=true];name[lang=$lang];$catalogVersion
+            ;product_list_root;Product List Root Category;
+
+
+INSERT_UPDATE ProductListCategory;code[unique=true];supercategories(code,$catalogVersion);name[lang=$lang];$catalogVersion;country(isoCode)
+                              ;listCategory01;product_list_root;List Category 01;;PL
+                              ;listCategory02;product_list_root;List Category 02;;DE
+                              ;listCategory03;product_list_root;List Category 03;;CZ
+                              ;listCategory04;product_list_root;List Category 04;;PL
+                              ;listCategory05;product_list_root;List Category 05;;DE
+
+
+UPDATE Product;code[unique=true];$supercategories[mode=append];$catalogVersion
+            ;DV_3_B_SKU1;listCategory01
+            ;DV_3_W_SKU2;listCategory01
+            ;DV_4_S_SKU;listCategory02
+            ;DV_5_S_SKU;listCategory02
+            ;DV_6_S_SKU;listCategory03
+            ;DV_7_S_SKU;listCategory03
+            ;DV_8_S_SKU;listCategory04
+            ;DV_9_S_SKU;listCategory04
+            ;DV_10_S_SKU;listCategory05
+            ;DV_11_S_SKU;listCategory05
+
+
+INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);sortableType(code);currency[default=false];localized[default=false];multiValue[default=true];facet[default=false];facetType(code);facetSort(code);priority;visible;fieldValueProvider;valueProviderParameters[map-delimiter=|];rangeSets(name)
+                                 ;$solrIndexedType;Product lists;string;;;false;;true;MultiSelectOr;Alpha;1000;true;productListCategoryValueProvider;countryIsoCode->PL

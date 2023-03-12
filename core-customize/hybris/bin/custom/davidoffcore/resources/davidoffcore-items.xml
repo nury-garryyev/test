@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (c) 2021 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<!--
+	ATTENTION: This is just an example file. You have to edit it according to your needs.
+-->
+
+<items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xsi:noNamespaceSchemaLocation="items.xsd">
+
+	<relations>
+		<relation code="Category2CountryRelation" localized="false" generate="true">
+			<sourceElement qualifier="productLists" type="ProductListCategory" cardinality="many"/>
+			<targetElement qualifier="country" type="Country" cardinality="one">
+				<modifiers optional="false"/>
+			</targetElement>
+		</relation>
+
+		<relation code="Category2B2BUnitRelation" localized="false" generate="true">
+			<deployment table="Category2B2BUnitRelation" typecode="24243"/>
+			<sourceElement qualifier="category" type="ProductListCategory" cardinality="many"/>
+			<targetElement qualifier="b2bunit" type="B2BUnit" cardinality="many"/>
+		</relation>
+
+	</relations>
+
+	<itemtypes>
+		<itemtype code="ProductListCategory" extends="Category"
+				  autocreate="true" generate="true">
+			<description>ProductListCategory</description>
+		</itemtype>
+	</itemtypes>
+
+
+
+</items>

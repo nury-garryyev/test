@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2021 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+<!--    <bean id="DavidoffcoreSystemSetup" class="de.hybris.platform.davidoffcore.setup.DavidoffcoreSystemSetup" >
+        <property name="importService" ref="importService"/>
+        <property name="configurationService" ref="configurationService" />
+    </bean>-->
+	
+    <bean id="davidoffcoreSystemSetup" class="de.hybris.platform.davidoffcore.setup.DavidoffcoreSystemSetup">
+        <!-- constructor arg injection example -->
+        <constructor-arg ref="davidoffcoreService"/>
+        <constructor-arg ref="davidoffSampleDataImportService"/>
+        <constructor-arg ref="configurationService"/>
+    </bean>
+
+    <bean id="davidoffSampleDataImportService" class="de.hybris.platform.davidoffcore.service.impl.DavidoffSampleDataImportService"
+          parent="sampleDataImportService">
+    </bean>
+
+
+    <bean id="davidoffcoreService" class="de.hybris.platform.davidoffcore.service.impl.DefaultDavidoffcoreService">
+        <!-- setter injection example -->
+        <property name="modelService" ref="modelService"/>
+        <property name="mediaService" ref="mediaService"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+    </bean>
+
+
+    <bean id="productListCategoryValueProvider"
+          class="de.hybris.platform.davidoffcore.solr.ProductListValueProvider"
+          parent="abstractPropertyFieldValueProvider">
+        <property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+    </bean>
+
+</beans>

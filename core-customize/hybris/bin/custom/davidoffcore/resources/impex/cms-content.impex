@@ -1,0 +1,163 @@
+
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+$contentCatalog=powertools-spaContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$jarResourceCms=jar:de.hybris.platform.commerceorgaddon.constants.CommerceorgaddonConstants&/commerceorgaddon/import/cockpits/cmscockpit
+
+
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor];pk[unique=true]
+$jarResourceCms=$config-jarResourceCmsValue
+
+# Create PageTemplates
+# These define the layout for pages
+# "FrontendTemplateName" is used to define the JSP that should be used to render the page for pages with multiple possible layouts.
+# "RestrictedPageTypes" is used to restrict templates to page types
+INSERT_UPDATE PageTemplate;$contentCV[unique=true];uid[unique=true];name;frontendTemplateName;restrictedPageTypes(code);active[default=true]
+                          ;;CompanyPageTemplate;Company Page Template;account/accountLayoutPage;ContentPage;false;
+
+# Add Velocity templates that are in the CMS Cockpit. These give a better layout for editing pages
+# The FileLoaderValueTranslator loads a File into a String property. The templates could also be inserted in-line in this file.
+UPDATE PageTemplate;$contentCV[unique=true];uid[unique=true];velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
+                   ;;CompanyPageTemplate 		;$jarResourceCms/structure-view/structure_accountPageTemplate.vm
+
+
+# Company Page Template
+# Template used for all of the Company pages
+INSERT_UPDATE ContentSlotName;name[unique=true];template(uid,$contentCV)[unique=true][default='CompanyPageTemplate'];validComponentTypes(code);compTypeGroup(code)
+                             ;SiteLogo;;;logo
+                             ;HeaderLinks;;;headerlinks
+                             ;SearchBox;;;searchbox
+                             ;MiniCart;;;minicart
+                             ;NavigationBar;;;navigation
+                             ;TopContent;;;wide
+                             ;SideContent;;;narrow
+                             ;BodyContent;;;wide
+                             ;BottomContent;;;wide
+                             ;Footer;;;footer
+                             ;TopHeaderSlot;;;wide
+                             ;BottomHeaderSlot;;;wide
+
+
+INSERT_UPDATE ContentSlotForTemplate;$contentCV[unique=true];uid[unique=true];position[unique=true];pageTemplate(uid,$contentCV)[unique=true][default='CompanyPageTemplate'];contentSlot(uid,$contentCV)[unique=true];allowOverwrite
+                                    ;;SiteLogo-CompanyPage;SiteLogo;;SiteLogoSlot;true
+                                    ;;HomepageLink-CompanyPage;HomepageNavLink;;HomepageNavLinkSlot;true
+                                    ;;HeaderLinks-CompanyPage;HeaderLinks;;HeaderLinksSlot;true
+                                    ;;SearchBox-CompanyPage;SearchBox;;SearchBoxSlot;true
+                                    ;;NavigationBar-CompanyPage;NavigationBar;;NavigationBarSlot;true
+                                    ;;MiniCart-CompanyPage;MiniCart;;MiniCartSlot;true
+                                    ;;Footer-CompanyPage;Footer;;FooterSlot;true
+                                    ;;TopHeaderSlot-CompanyPage;TopHeaderSlot;;TopHeaderSlot;true
+                                    ;;BottomHeaderSlot-CompanyPage;BottomHeaderSlot;;BottomHeaderSlot;true
+
+
+# Functional Content Pages
+INSERT_UPDATE ContentPage;$contentCV[unique=true];uid[unique=true];name;masterTemplate(uid,$contentCV);label;defaultPage[default='true'];approvalStatus(code)[default='approved'];homepage[default='false'];previewImage(code, $contentCV)[default='ContentPageModel__function_preview']
+                         ;;my-company-login;My Company Login Page;LoginPageTemplate;my-company-login
+                         ;;my-company;My Company Page;CompanyPageTemplate;my-company
+                         ;;organizationManagement;Organization Management Page;CompanyPageTemplate;organizationManagement
+                         ;;manageUnits;Manage Units Page;CompanyPageTemplate;manageUnits
+                         ;;manageUsergroups;Manage Usergroup Page;CompanyPageTemplate;manageUsergroups
+                         ;;manageUnitApprovers;Manage Units Approvers Page;CompanyPageTemplate;manageUnitApprovers
+
+
+# Preview Image for use in the CMS Cockpit for special ContentPages
+INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];mime;realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true]
+                   ;;ContentPageModel__function_preview;text/gif;ContentPageModel__function_preview.gif;$jarResourceCms/preview-images/ContentPageModel__function_preview.gif
+
+
+
+
+
+#### Media ####
+# Preview Image for use in the CMS Cockpit for special ContentPages
+#INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];mime;realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true];folder(qualifier)[default='images']
+#                   ;;manageUnitsPagePreview;text/png;ManageUnitsPage.png;$jarResourceCms/preview-images/powertools/ManageUnitsPage.png
+#                   ;;manageUserGroupsPagePreview;text/png;ManageUserGroupsPage.png;$jarResourceCms/preview-images/powertools/ManageUserGroupsPage.png
+#                   ;;myCompanyloginPagePreview;text/png;MyCompanyLoginPage.png;$jarResourceCms/preview-images/powertools/MyCompanyLoginPage.png
+#                   ;;manageUnitApproversPagePreview;text/png;ManageUnitApproversPage.png;$jarResourceCms/preview-images/powertools/ManageUnitApproversPage.png
+#
+#
+## Functional Content Pages
+#UPDATE ContentPage;$contentCV[unique=true];uid[unique=true];previewImage(code, $contentCV)
+#                  ;;manageUnits;manageUnitsPagePreview
+#                  ;;manageUsergroups;manageUserGroupsPagePreview
+#                  ;;my-company-login;myCompanyloginPagePreview
+#                  ;;manageUnitApprovers;manageUnitApproversPagePreview
+
+
+#################    MY COMPANY START    #################
+
+
+#### add my-company related cms items for responsive ####
+
+# create cms link components for my-company pages
+INSERT_UPDATE CMSLinkComponent;$contentCV[unique=true];uid[unique=true];name;url;&linkRef;target(code)[default='sameWindow']
+                              ;;BudgetLink;Company Manage Budget Link;/my-company/organization-management/manage-budgets/;BudgetLink;
+#;;BudgetAddLink;Company Add Budget Link;/my-company/organization-management/manage-budgets/add;BudgetAddLink;
+#;;BudgetEditLink;Company Edit Budget Link;/my-company/organization-management/manage-budgets/;BudgetEditLink;
+                              ;;CostCenterLink;Company Manage Cost Centers Link;/my-company/organization-management/manage-costcenters/;CostCenterLink;
+#;;CostCenterAddLink;Company Add Cost Centers Link;/my-company/organization-management/manage-costcenters/add;CostCenterAddLink;
+#;;CostCenterEditLink;Company Manage Cost Centers Link;/my-company/organization-management/manage-costcenters/;CostCenterEditLink;
+                              ;;UnitsLink;Company Manage Units Link;/my-company/organization-management/manage-units/;UnitsLink;
+#;;UnitsAddLink;Company Add Units Link;/my-company/organization-management/manage-units/;UnitsAddLink;
+#;;UnitsEditLink;Company Edit Units Link;/my-company/organization-management/manage-units/;UnitsEditLink;
+                              ;;UsersLink;Company Manage Users Link;/my-company/organization-management/manage-users/;UsersLink;
+#;;UsersAddLink;Company Add Users Link;/my-company/organization-management/manage-users/;UsersAddLink;
+#;;UsersEditLink;Company Edit Users Link;/my-company/organization-management/manage-users/;UsersEditLink;
+                              ;;UserGroupsLink;Company Manage User Groups Link;/my-company/organization-management/manage-usergroups/;UserGroupsLink;
+#;;UserGroupsAddLink;Company Add User Groups Link;/my-company/organization-management/manage-usergroups/;UserGroupsAddLink;
+#;;UserGroupsEditLink;Company Edit User Groups Link;/my-company/organization-management/manage-usergroups/;UserGroupsEditLink;
+                              ;;PermissionsLink;Company Manage User Groups Link;/my-company/organization-management/manage-permissions/;PermissionsLink;
+#;;PermissionsAddLink;Company Add User Groups Link;/my-company/organization-management/manage-permissions/;PermissionsAddLink;
+#;;PermissionsEditLink;Company Edit User Groups Link;/my-company/organization-management/manage-permissions/;PermissionsEditLink;
+
+# create navigation root node for my-company & child nodes for the root node
+INSERT_UPDATE CMSNavigationNode;uid[unique=true];$contentCV[unique=true];name;parent(uid, $contentCV);links(&linkRef);&nodeRef
+                               ;MyCompanyNavNode;;My Company;PowertoolsNavNode;;MyCompanyNavNode
+# children for my-company
+                               ;BudgetNavNode;;Budget;MyCompanyNavNode;;BudgetNavNode
+                               ;CostCenterNavNode;;Cost Center;MyCompanyNavNode;;CostCenterNavNode
+                               ;UnitsNavNode;;Units;MyCompanyNavNode;;UnitsNavNode
+                               ;UsersNavNode;;Users;MyCompanyNavNode;;UsersNavNode
+                               ;UserGroupsNavNode;;User Groups;MyCompanyNavNode;;UserGroupsNavNode
+                               ;PermissionsNavNode;;Permissions;MyCompanyNavNode;;PermissionsNavNode
+
+# create cms navigation entry for navigation child nodes
+INSERT_UPDATE CMSNavigationEntry;uid[unique=true];$contentCV[unique=true];name;navigationNode(&nodeRef);item(&linkRef);
+                                ;BudgetNavNodeEntry;;Budget Nav Node Entry;BudgetNavNode;BudgetLink;
+                                ;CostCenterNavNodeEntry;;Cost Center Nav Node Entry;CostCenterNavNode;CostCenterLink;
+                                ;UnitsNavNodeEntry;;Units Nav Node Entry;UnitsNavNode;UnitsLink;
+                                ;UsersNavNodeEntry;;Users Nav Node Entry;UsersNavNode;UsersLink;
+                                ;UserGroupsNavNodeEntry;;User Groups Nav Node Entry;UserGroupsNavNode;UserGroupsLink;
+                                ;PermissionsNavNodeEntry;;Permissions Nav Node Entry;PermissionsNavNode;PermissionsLink;
+
+# create navigation component for my-company
+INSERT_UPDATE NavigationComponent;$contentCV[unique=true];uid[unique=true];name;styleClass;&componentRef;navigationNode(&nodeRef)
+                                 ;;MyCompanyComponent;My Company;companyNavComponent;MyCompanyComponent;MyCompanyNavNode
+
+#### add appropriate restrictions ####
+
+# CMS User Group Restrictions
+INSERT_UPDATE CMSUserGroupRestriction;$contentCV[unique=true];uid[unique=true];name;userGroups(uid);includeSubgroups;components(&componentRef)
+                                     ;;MyCompanyLinkAdminGroupRestriction;My Company Link Admin Group Restriction;b2badmingroup;true;MyCompanyComponent
+
+#### add my-company stuff here ####
+
+# add my account navigation component to a content slot
+INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)[mode=append]
+                         ;;HeaderLinksSlot;MyCompanyComponent
+
+UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(&componentRef);
+
+INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;page;actions(uid,$contentCV);&componentRef
+
+
+UPDATE SyncAttributeDescriptorConfig[batchmode=true];includedInSync;attributeDescriptor(qualifier, enclosingType(code))[unique=true]
+                                                    ;false;navigationNodeList:AbstractPage
+##################    MY COMPANY END    #################
+
